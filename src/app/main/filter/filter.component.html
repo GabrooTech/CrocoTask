@@ -1,0 +1,18 @@
+<section>
+  <div class="top_filter">
+    <div *ngFor="let item of categories" 
+         [class.selected]="isSelected(item)" 
+         (click)="selectCategory(item)">
+      <img src="assets/icons/new_games.svg" alt="">
+      <span>{{ getDisplayName(item) }}</span>
+      <span class="amount">{{ item.games?.length }}</span>
+    </div>
+  </div>
+  <div class="bottom_filter">
+    <div *ngFor="let provider of uniqueProviderNames" 
+         [class.selected]="isProviderSelected(provider)" 
+         (click)="selectProvider(provider)">
+      <span>{{ provider }}</span>
+    </div>
+  </div>
+</section>
