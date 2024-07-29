@@ -1,28 +1,31 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, catchError, tap, } from 'rxjs';
-import { BehaviorSubject, throwError  } from 'rxjs';
-import { response } from 'express';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { ImagePair } from '../main/filter/filter.component';
+
 @Injectable({
   providedIn: 'root'
 })
 export class SharedService {
   private baseUrl = 'https://cms.crocobet.com/integrations';
-  private imagePairsSource = new BehaviorSubject<any[]>([]);
-  imagePairs$ = this.imagePairsSource.asObservable();
+  private imagePairsSubject = new BehaviorSubject<ImagePair[]>([]);
+  imagePairs$ = this.imagePairsSubject.asObservable();
+  
   constructor(private http: HttpClient) {}
 
+  updateImagePairs(imagePairs: ImagePair[]): void {
+    this.imagePairsSubject.next(imagePairs);
+  }
 
-  updateImagePairs(imagePairs: any[]) {
-    this.imagePairsSource.next(imagePairs);
+  getSlotData(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/v2/slot/categories?include=games`);
   }
-  getSlotData(): Observable<any>{
-    return this.http.get<any>(`${this.baseUrl}/v2/slot/categories?include=games`)
+
+  getProvidersData(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}?type=slot&platform=desktop`);
   }
-  getProvidersData(): Observable<any>{
-    return this.http.get<any>(`${this.baseUrl}?type=slot&platform=desktop`)
-  }
-  getSlotsByProvidersData(): Observable<any>{
-    return this.http.get<any>(`${this.baseUrl}/v2/slot/providers/TPG@egt`)
+
+  getSlotsByProvidersData(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/v2/slot/providers/TPG@egt`);
   }
 }

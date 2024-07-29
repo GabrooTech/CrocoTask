@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CategoryItem, Game } from '../../shared/api-response.module';
 import { CommonModule } from '@angular/common';
 import { SharedService } from '../../shared/shared.service';
+import { BehaviorSubject } from 'rxjs';
 
 export interface ImagePair {
   name: string;
@@ -18,20 +19,28 @@ export interface ImagePair {
 })
 export class FilterComponent implements OnInit {
   @Input() categories: CategoryItem[] = [];
-  selectedCategory: CategoryItem | null = null;
-  uniqueProviderNames: string[] = [];
-  selectedProvider: string = 'All';
-  imagePairs: ImagePair[] = [];
+  
+  private selectedCategorySubject = new BehaviorSubject<CategoryItem | null>(null);
+  selectedCategory$ = this.selectedCategorySubject.asObservable();
+
+  private uniqueProviderNamesSubject = new BehaviorSubject<string[]>([]);
+  uniqueProviderNames$ = this.uniqueProviderNamesSubject.asObservable();
+
+  private selectedProviderSubject = new BehaviorSubject<string>('All');
+  selectedProvider$ = this.selectedProviderSubject.asObservable();
+
+  private imagePairsSubject = new BehaviorSubject<ImagePair[]>([]);
+  imagePairs$ = this.imagePairsSubject.asObservable();
 
   constructor(private sharedService: SharedService) {}
 
   ngOnInit(): void {
     console.log(this.categories);
     if (this.categories.length > 0) {
-      this.selectedCategory = this.categories[0];
-      this.updateUniqueProviderNames(this.selectedCategory);
-      this.selectedProvider = 'All';
-      this.updateImagePairs(this.selectedCategory); 
+      this.selectedCategorySubject.next(this.categories[0]);
+      this.updateUniqueProviderNames(this.categories[0]);
+      this.selectedProviderSubject.next('All');
+      this.updateImagePairs(this.categories[0]); // Update image pairs on init
     }
   }
 
@@ -53,46 +62,50 @@ export class FilterComponent implements OnInit {
   }
 
   selectCategory(item: CategoryItem): void {
-    this.selectedCategory = item;
+    this.selectedCategorySubject.next(item);
     this.updateUniqueProviderNames(item);
-    this.selectedProvider = 'All';
-    this.updateImagePairs(item); 
+    this.selectedProviderSubject.next('All'); // Set 'All' as the selected provider when category changes
+    this.updateImagePairs(item); // Update image pairs on category selection
   }
 
   selectProvider(provider: string): void {
-    this.selectedProvider = provider;
-    if (this.selectedCategory) {
-      this.updateImagePairs(this.selectedCategory); 
+    this.selectedProviderSubject.next(provider);
+    const selectedCategory = this.selectedCategorySubject.getValue();
+    if (selectedCategory) {
+      this.updateImagePairs(selectedCategory); // Update image pairs on provider selection
     }
   }
 
   isSelected(item: CategoryItem): boolean {
-    return this.selectedCategory === item;
+    return this.selectedCategorySubject.getValue() === item;
   }
 
   isProviderSelected(provider: string): boolean {
-    return this.selectedProvider === provider;
+    return this.selectedProviderSubject.getValue() === provider;
   }
 
   updateUniqueProviderNames(category: CategoryItem): void {
     const providerNames = new Set(
       category.games?.map((game: Game) => game.providerName) || []
     );
-    this.uniqueProviderNames = ['All', ...providerNames];
+    this.uniqueProviderNamesSubject.next(['All', ...providerNames]);
   }
 
   updateImagePairs(category: CategoryItem): void {
     let games = category.games || [];
-    if (this.selectedProvider !== 'All') {
-      games = games.filter(game => game.providerName === this.selectedProvider);
+    if (this.selectedProviderSubject.getValue() !== 'All') {
+      games = games.filter(game => game.providerName === this.selectedProviderSubject.getValue());
     }
     const imagePairs: ImagePair[] = games.map((game: any) => ({
       name: game.name,
       image: game.image,
       image2: game.image2
     }));
+    // Filter out pairs with missing images
     const filteredImagePairs = imagePairs.filter(pair => pair.image && pair.image2);
 
+    // Send the image pairs to the shared service
     this.sharedService.updateImagePairs(filteredImagePairs);
+    this.imagePairsSubject.next(filteredImagePairs);
   }
 }

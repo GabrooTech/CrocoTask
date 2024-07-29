@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { SharedService } from '../../shared/shared.service';
 import { CommonModule } from '@angular/common';
+import { ImagePair } from '../filter/filter.component';
 
 @Component({
   selector: 'app-games',
@@ -15,9 +16,8 @@ export class GamesComponent {
   constructor(private sharedService: SharedService) {} 
 
   ngOnInit(): void {
-    this.sharedService.imagePairs$.subscribe(imagePairs => {
+    this.sharedService.imagePairs$.subscribe((imagePairs: ImagePair[]) => {
       this.imagePairs = imagePairs;
-      console.log(this.imagePairs); 
     });
   }
 }
