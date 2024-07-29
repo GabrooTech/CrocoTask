@@ -40,7 +40,7 @@ export class FilterComponent implements OnInit {
       this.selectedCategorySubject.next(this.categories[0]);
       this.updateUniqueProviderNames(this.categories[0]);
       this.selectedProviderSubject.next('All');
-      this.updateImagePairs(this.categories[0]); // Update image pairs on init
+      this.updateImagePairs(this.categories[0]);
     }
   }
 
@@ -64,15 +64,15 @@ export class FilterComponent implements OnInit {
   selectCategory(item: CategoryItem): void {
     this.selectedCategorySubject.next(item);
     this.updateUniqueProviderNames(item);
-    this.selectedProviderSubject.next('All'); // Set 'All' as the selected provider when category changes
-    this.updateImagePairs(item); // Update image pairs on category selection
+    this.selectedProviderSubject.next('All'); 
+    this.updateImagePairs(item); 
   }
 
   selectProvider(provider: string): void {
     this.selectedProviderSubject.next(provider);
     const selectedCategory = this.selectedCategorySubject.getValue();
     if (selectedCategory) {
-      this.updateImagePairs(selectedCategory); // Update image pairs on provider selection
+      this.updateImagePairs(selectedCategory); 
     }
   }
 
@@ -101,10 +101,10 @@ export class FilterComponent implements OnInit {
       image: game.image,
       image2: game.image2
     }));
-    // Filter out pairs with missing images
+
     const filteredImagePairs = imagePairs.filter(pair => pair.image && pair.image2);
 
-    // Send the image pairs to the shared service
+
     this.sharedService.updateImagePairs(filteredImagePairs);
     this.imagePairsSubject.next(filteredImagePairs);
   }
