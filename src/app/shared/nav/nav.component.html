@@ -1,0 +1,18 @@
+<header></header>
+<aside>
+    <div class="logo">
+      <a>
+        <img src="assets/icons/logo.svg" alt="">
+      </a>
+    </div>
+    <div class="pages">
+      <div *ngFor="let item of sidebarItems" [ngClass]="item.label.toLowerCase()">
+        <a [routerLink]="item.route" routerLinkActive="active-link">
+          <div>
+            <img [src]="item.icon" alt="">
+            <span>{{ item.label }}</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </aside>

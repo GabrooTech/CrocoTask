@@ -1,0 +1,12 @@
+<div class="container">
+    @for (item of imagePairs; let i = $index; track item) {
+        <div class="item">
+            <img [src]="item.image" alt="">
+            <!-- ზოგი დიდი ფოტო არ მოდის -->
+            <div class="card_bottom">
+                <span>{{item.name}}</span>
+            </div>
+            <div class="play">PLAY</div>
+        </div>
+    }
+</div>

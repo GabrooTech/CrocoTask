@@ -1,0 +1,22 @@
+[
+    {
+      "route": "/sports",
+      "icon": "assets/icons/sport.svg",
+      "label": "SPORTS"
+    },
+    {
+      "route": "/live",
+      "icon": "assets/icons/live.svg",
+      "label": "LIVE"
+    },
+    {
+      "route": "/slots",
+      "icon": "assets/icons/slot.svg",
+      "label": "SLOTS"
+    },
+    {
+      "route": "/casino",
+      "icon": "assets/icons/casino.svg",
+      "label": "CASINO"
+    }
+]
