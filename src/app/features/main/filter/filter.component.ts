@@ -3,6 +3,8 @@ import { CategoryItem, Game } from '../../../shared/model/api-response.model';
 import { CommonModule } from '@angular/common';
 import { SharedService } from '../../../shared/services/shared.service';
 import { DisplayCategoryEnum } from '../../../shared/enum/shared.enum';
+import { signal, WritableSignal } from '@angular/core';
+
 export interface ImagePair {
   name: string;
   image: string;
@@ -18,19 +20,20 @@ export interface ImagePair {
 })
 export class FilterComponent implements OnInit {
   @Input() categories: CategoryItem[] = [];
-  selectedCategory: CategoryItem | null = null;
-  uniqueProviderNames: string[] = [];
-  selectedProvider: string = 'All';
-  imagePairs: ImagePair[] = [];
+  selectedCategory: WritableSignal<CategoryItem | null> = signal<CategoryItem | null>(null);
+  uniqueProviderNames: WritableSignal<string[]> = signal<string[]>([]);
+  selectedProvider: WritableSignal<string> = signal<string>('All');
+  imagePairs: WritableSignal<ImagePair[]> = signal<ImagePair[]>([]);
 
   constructor(private sharedService: SharedService) {}
 
   ngOnInit(): void {
     if (this.categories.length > 0) {
-      this.selectedCategory = this.categories[0];
-      this.updateUniqueProviderNames(this.selectedCategory);
-      this.selectedProvider = 'All';
-      this.updateImagePairs(this.selectedCategory); 
+      const initialCategory = this.categories[0];
+      this.selectedCategory.set(initialCategory);
+      this.updateUniqueProviderNames(initialCategory);
+      this.selectedProvider.set('All');
+      this.updateImagePairs(initialCategory);
     }
   }
 
@@ -39,16 +42,17 @@ export class FilterComponent implements OnInit {
   }
 
   selectCategory(item: CategoryItem): void {
-    this.selectedCategory = item;
+    this.selectedCategory.set(item);
     this.updateUniqueProviderNames(item);
-    this.selectedProvider = 'All';
-    this.updateImagePairs(item); 
+    this.selectedProvider.set('All');
+    this.updateImagePairs(item);
   }
 
   selectProvider(provider: string): void {
-    this.selectedProvider = provider;
-    if (this.selectedCategory) {
-      this.updateImagePairs(this.selectedCategory); 
+    this.selectedProvider.set(provider);
+    const selectedCategoryValue = this.selectedCategory();
+    if (selectedCategoryValue) {
+      this.updateImagePairs(selectedCategoryValue);
     }
   }
 
@@ -56,13 +60,13 @@ export class FilterComponent implements OnInit {
     const providerNames = new Set(
       category.games?.map((game: Game) => game.providerName) || []
     );
-    this.uniqueProviderNames = ['All', ...providerNames];
+    this.uniqueProviderNames.set(['All', ...providerNames]);
   }
 
   updateImagePairs(category: CategoryItem): void {
     let games = category.games || [];
-    if (this.selectedProvider !== 'All') {
-      games = games.filter(game => game.providerName === this.selectedProvider);
+    if (this.selectedProvider() !== 'All') {
+      games = games.filter(game => game.providerName === this.selectedProvider());
     }
     const imagePairs: ImagePair[] = games.map((game: any) => ({
       name: game.name,
@@ -71,6 +75,7 @@ export class FilterComponent implements OnInit {
     }));
     const filteredImagePairs = imagePairs.filter(pair => pair.image && pair.image2);
 
+    this.imagePairs.set(filteredImagePairs);
     this.sharedService.updateImagePairs(filteredImagePairs);
   }
 }

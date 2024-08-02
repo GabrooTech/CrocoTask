@@ -1,19 +1,19 @@
 <section>
   <div class="top_filter">
-    @for (item of categories; track item) {
+    @for(item of categories; track item){
       <div
-      [class.selected]="selectedCategory?.category === item.category" 
+      [class.selected]="selectedCategory()?.category === item.category" 
       (click)="selectCategory(item)">
-        <img src="assets/icons/new_games.svg" alt="">
-        <span>{{ getDisplayName(item) }}</span>
-        <span class="amount">{{ item.games?.length }}</span>
-      </div>
+      <img src="assets/icons/new_games.svg" alt="">
+      <span>{{ getDisplayName(item) }}</span>
+      <span class="amount">{{ item.games?.length }}</span>
+    </div>
     }
   </div>
   <div class="bottom_filter">
-    @for (provider of uniqueProviderNames; track provider) {
+    @for(provider of uniqueProviderNames(); track provider){
       <div
-      [class.selected]="selectedProvider === provider" 
+      [class.selected]="selectedProvider() === provider" 
       (click)="selectProvider(provider)">
         <span>{{ provider }}</span>
       </div>
