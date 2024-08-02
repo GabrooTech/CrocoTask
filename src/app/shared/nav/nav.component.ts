@@ -1,22 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SharedService } from '../services/shared.service';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 @Component({
   selector: 'app-nav',
   standalone: true,
   templateUrl: './nav.component.html',
   styleUrl: './nav.component.css',
-  imports: [RouterModule, CommonModule]
+  imports: [RouterModule, CommonModule, HttpClientModule]
 })
-export class NavComponent implements OnInit{
-  sidebarItems: any[] = [];
+export class NavComponent{
+  sidebarItems$ = this.SharedService.getSidebarItems();
   constructor(private SharedService: SharedService) {}
-
-  ngOnInit(): void {
-    this.SharedService.getSidebarItems().subscribe(data => {
-      this.sidebarItems = data;
-    });
-  }
-
 }

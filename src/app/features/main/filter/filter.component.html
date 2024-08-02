@@ -4,7 +4,6 @@
       <div
       [class.selected]="selectedCategory()?.category === item.category" 
       (click)="selectCategory(item)">
-      <img src="assets/icons/new_games.svg" alt="">
       <span>{{ getDisplayName(item) }}</span>
       <span class="amount">{{ item.games?.length }}</span>
     </div>

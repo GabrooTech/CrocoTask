@@ -6,7 +6,7 @@
       </a>
     </div>
     <div class="pages">
-      <div *ngFor="let item of sidebarItems" [ngClass]="item.label.toLowerCase()">
+      <div *ngFor="let item of (sidebarItems$ | async)" [ngClass]="item.label.toLowerCase()">
         <a [routerLink]="item.route" routerLinkActive="active-link">
           <div>
             <img [src]="item.icon" alt="">

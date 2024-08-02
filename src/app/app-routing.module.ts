@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/slots', pathMatch: 'full'},
+  { path: '', redirectTo: 'slots', pathMatch: 'full'},
   { path: 'main', loadComponent: () => import('./features/main/main.component').then(m => m.MainComponent) },
   { path: 'live', loadComponent: () => import('./features/live/live.component').then(m => m.LiveComponent) },
   { path: 'casino', loadComponent: () => import('./features/casino/casino.component').then(m => m.CasinoComponent) },

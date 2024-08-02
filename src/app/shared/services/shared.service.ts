@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 import { ApiResponse, CategoryItem } from '../model/api-response.model';
-import { environment } from '../../enviroments/enviroment';
+import { environment } from '../../../enviroments/enviroment';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +36,7 @@ export class SharedService {
   }
 
   getSlotsByProvidersData(): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/v2/slot/providers/TPG@egt`)
+    return this.http.get<any>(`${this.baseUrl}/v2/slot/providers/pragmatic?platform=desktop`)
       .pipe(
         catchError(this.handleError) 
       );
